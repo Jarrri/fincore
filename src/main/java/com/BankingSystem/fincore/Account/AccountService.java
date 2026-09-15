@@ -78,4 +78,30 @@ public AccountResponse deposit(String accountNumber, DepositRequest request) {
 
     return mapToResponse(savedAccount);
 }
+@Transactional
+public AccountResponse withdraw(String accountNumber, DepositRequest request) {
+
+    Account account = accountRepository.findByAccountNumber(accountNumber)
+            .orElseThrow(() -> new RuntimeException("Account not found"));
+
+    if (!account.getStatus().equals("ACTIVE")) {
+        throw new RuntimeException("Account is not active");
+    }
+
+    if (!account.getCurrency().equals(request.getCurrency())) {
+        throw new RuntimeException("Currency mismatch");
+    }
+
+    if (account.getBalance().compareTo(request.getAmount()) < 0) {
+        throw new RuntimeException("Insufficient balance");
+    }
+
+    account.setBalance(
+            account.getBalance().subtract(request.getAmount())
+    );
+
+    Account savedAccount = accountRepository.save(account);
+
+    return mapToResponse(savedAccount);
+}
 }

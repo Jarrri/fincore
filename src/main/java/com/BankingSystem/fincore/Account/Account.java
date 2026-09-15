@@ -20,7 +20,7 @@ public class Account {
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "customer_id", nullable = false)
+    @JoinColumn(name = "customer_id", nullable = false) 
     private Customer customer;
 
     @Column(nullable = false, unique = true)
